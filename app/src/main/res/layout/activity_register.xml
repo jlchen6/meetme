@@ -8,7 +8,7 @@
         android:layout_height="wrap_content"
         android:inputType="textPersonName"
         android:ems="10"
-        android:id="@+id/usernameText"
+        android:id="@+id/phoneno"
         android:hint="Create new username:" />
 
     <EditText
@@ -16,12 +16,29 @@
         android:layout_height="wrap_content"
         android:inputType="textPassword"
         android:ems="10"
-        android:id="@+id/passwordText"
+        android:id="@+id/email"
         android:hint="Set up password:" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:ems="10"
+        android:id="@+id/firstname"
+        android:hint="Confirm your password:" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:ems="10"
+        android:id="@+id/lastname"
+        android:hint="Confirm your password:" />
 
     <Button
         android:text="Save"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/saveButton" />
+        android:id="@+id/register"
+        android:onClick="goToLogin" />
 </LinearLayout>

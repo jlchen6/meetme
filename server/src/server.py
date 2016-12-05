@@ -14,7 +14,7 @@ from google.appengine.api import app_identity
 MAIN_PAGE_HTML = """\
 <html>
   <body>
-    <a href="storeavalue">StoreValue </a>
+    <a href="setactive">SetActive </a>
     </br>
     <a href="getvalue">QueryValue </a>
     </br>
@@ -265,7 +265,7 @@ class MainPage(webapp2.RequestHandler):
 # http://webapp-improved.appspot.com/guide/app.html
 application = webapp2.WSGIApplication([
 	('/', MainPage),
-	('/storeavalue', StoreAValue),
+	('/setactive', SetActive),
 	('/getvalue', GetValue),
 	('/getrecommendation', GetRecommendation),
 	('/registeruser', RegisterUser),

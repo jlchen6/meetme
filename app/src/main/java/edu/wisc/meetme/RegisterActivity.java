@@ -79,7 +79,7 @@ public class RegisterActivity extends Activity {
         @Override
         protected String doInBackground(String... strs) {
             String reply = null;
-            String temp1=""; //capture acknowledgement from server, if any
+            String temp=""; //capture acknowledgement from server, if any
 
             //Construct an HTTP POST
             HttpClient httpclient = new DefaultHttpClient();
@@ -98,7 +98,7 @@ public class RegisterActivity extends Activity {
 
             try {
                 UrlEncodedFormEntity httpEntity = new UrlEncodedFormEntity(nameValuePairs);
-                storeVal.setEntity(httpEntity);
+                registerUser.setEntity(httpEntity);
 
                 //Execute HTTP POST
                 HttpResponse response = httpclient.execute(registerUser);

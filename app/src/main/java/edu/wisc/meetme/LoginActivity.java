@@ -14,15 +14,13 @@ public class LoginActivity extends Activity{
 
 
     public void goToHome(View view) {
-        Intent i = new Intent(LoginActivity.this, HomeActivity.class);
+        Intent i = new Intent(LoginActivity.this, MainActivity.class);
         startActivity(i);
-
     }
 
     public void goToRegister(View view) {
         Intent i = new Intent(LoginActivity.this, RegisterActivity.class);
         startActivity(i);
-
     }
 
     @Override
