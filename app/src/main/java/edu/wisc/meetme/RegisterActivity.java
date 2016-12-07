@@ -68,6 +68,7 @@ public class RegisterActivity extends Activity {
                                                else
                                                {
                                                    // DISPLAY ERROR MESSAGE TO USER THAT FIELDS ARE INCOMPLETE
+                                               	Toast.makeText(getApplicationContext(), "Please fill in all fields before registration", Toast.LENGTH_SHORT).show();
                                                }
                                            }
                                        }
@@ -135,6 +136,10 @@ public class RegisterActivity extends Activity {
             if (res.equalsIgnoreCase("Success")) {
                 Toast.makeText(getApplicationContext(),
                         "Registered Successfully!", Toast.LENGTH_SHORT).show();
+            }
+            else if (res.equalsIgnoreCase("AlreadyRegistered")) {
+                Toast.makeText(getApplicationContext(),
+                        "This device is already registered.", Toast.LENGTH_SHORT).show();
             }
             else {
                 Toast.makeText(getApplicationContext(),

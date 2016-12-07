@@ -63,7 +63,7 @@ public class HomeActivity extends Activity implements LocationListener {
     ArrayList<User> online = new ArrayList<User>();
     ArrayList<User> offline = new ArrayList<User>();
     int[] testPrefs = {0,1,1,1,0};
-    ArrayAdapter<String> mAdapter;
+    ArrayAdapter<String> onlineAdapter;
     User testme = new User(0,"me", "me", testPrefs); //test User representing app user
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +76,7 @@ public class HomeActivity extends Activity implements LocationListener {
         onlineNames.add("Johnny Appleseed");
         /////////////////////////////////////////////
 
-        mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, R.id.friendsActive, onlineNames);
+        onlineAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, R.id.friendsActive, onlineNames);
 
 //<<<<<<< HEAD
         //When the user gets online, should send a ping to the server asking for list of active friends

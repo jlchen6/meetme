@@ -6,10 +6,10 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textPersonName"
+        android:inputType="phone"
         android:ems="10"
         android:id="@+id/phoneno"
-        android:hint="Create new username:" />
+        android:hint="Enter your phone number (e.g. 1234567890)" />
 
     <EditText
         android:layout_width="match_parent"
@@ -17,28 +17,27 @@
         android:inputType="textPassword"
         android:ems="10"
         android:id="@+id/email"
-        android:hint="Set up password:" />
+        android:hint="Enter your email (e.g. john.doe@domain.com)" />
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textPassword"
+        android:inputType="textCapSentences"
         android:ems="10"
         android:id="@+id/firstname"
-        android:hint="Confirm your password:" />
+        android:hint="Enter your first name" />
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textPassword"
+        android:inputType="textCapSentences"
         android:ems="10"
         android:id="@+id/lastname"
-        android:hint="Confirm your password:" />
+        android:hint="Enter your last name" />
 
     <Button
-        android:text="Save"
+        android:text="Register"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/register"
-        android:onClick="goToLogin" />
+        android:id="@+id/register" />
 </LinearLayout>
