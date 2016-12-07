@@ -23,6 +23,9 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
+
+import org.json.JSONArray;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -61,16 +64,52 @@ public class HomeActivity extends Activity implements LocationListener {
     ArrayList<User> offline = new ArrayList<User>();
     int[] testPrefs = {0,1,1,1,0};
     ArrayAdapter<String> mAdapter;
-    User testme = new User(0,"me", testPrefs); //test User representing app user
+    User testme = new User(0,"me", "me", testPrefs); //test User representing app user
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, onlineNames);
+        ///TEST CODE DELETE LATER//////////////////
+        onlineNames.add("Billy Bob");
+        onlineNames.add("Abby Smith");
+        onlineNames.add("Johnny Appleseed");
+        /////////////////////////////////////////////
+
+        mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, R.id.friendsActive, onlineNames);
 
 //<<<<<<< HEAD
         //When the user gets online, should send a ping to the server asking for list of active friends
+        //refreshFriends();
+
+    }
+
+    //Method to refresh the active friends list. Should ping server for updated list.
+    public void refreshFriends(View v){
+        JSONArray serverList;
+        //Call to server here
+        //Returns JSONArray where every third element are
+        // 1. First Name,
+        // 2. Last Name,
+        // 3. Active/Inactive Status
+        serverList = new JSONArray();
+
+        for (int i = 0; i < serverList.length(); i++){
+            switch(i % 3){
+                case 0: //First Name
+
+                    break;
+                case 1: //Last Name
+
+                    break;
+                case 2: //Active/Inactive Status
+
+                    break;
+                default: //Something went wrong
+                    return;
+            }
+        }
+
     }
 
     //Code for sorting Friends
@@ -92,7 +131,7 @@ public class HomeActivity extends Activity implements LocationListener {
 
         //Next, order online friends by distance from user
         //Test code sets up stuff for sorting////////////////
-        testme.testsetlocation(0);
+        //testme.testsetlocation(0);
         ////////////////////////////////////////////////////
 
         online = gpsSort(online);
@@ -237,7 +276,7 @@ public class HomeActivity extends Activity implements LocationListener {
     //Sorts the given list based on distance from app-user
     private ArrayList<User> gpsSort(ArrayList<User> users){
         ArrayList<User> sortedList = new ArrayList<User>();
-        int udis, qdis;
+        double udis, qdis;
         boolean uadded;
         for(User u: users){
             uadded = false;
@@ -249,8 +288,8 @@ public class HomeActivity extends Activity implements LocationListener {
                 for (User q : sortedList) {
 
                     //Once gps is properly coded, will have to change how distance is calculated///
-                    udis = Math.abs(u.getLocation() - testme.getLocation());
-                    qdis = Math.abs(q.getLocation() - testme.getLocation());
+                    udis = 0;//Math.abs(u.getLocation() - testme.getLocation());
+                    qdis = 0;//Math.abs(q.getLocation() - testme.getLocation());
                     ///////////////////////////////////////////////////////////////////////////////
 
                     //If u's distance is less than q's, insert u before q in the sortedList.

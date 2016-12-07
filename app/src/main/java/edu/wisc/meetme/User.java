@@ -1,5 +1,7 @@
 package edu.wisc.meetme;
 
+import android.location.Location;
+
 /**
  * Created by lulei on 11/2/2016.
  * Holds the User Object so User info can be stored easily.
@@ -18,15 +20,17 @@ public class User {
     public int NUMPREFS = 5;
 
     private int ID; //User id used as key for server, could be linked to phone number
-    private String name;
+    private String[] name;
     private boolean online; //boolean that denotes whether user is online
     private int prefs[]; //Array with user preferences. Will likely be laid out in specific order
-    private int location; //not sure what data structure location is kept as, so int for now
+    private Location location; //not sure what data structure location is kept as, so int for now
 
     //Constructor
-    public User(int id, String nem, int pref[]){
+    public User(int id, String first, String last, int pref[]){
         ID = id;
-        name = nem;
+        name = new String[2];
+        name[0] = first;
+        name[1] = last;
         prefs = pref;
     }
 
@@ -44,15 +48,15 @@ public class User {
     }
 
     public String getName(){
-        return name;
+        return (name[0] + " " + name[1]);
     }
 
-    public int getLocation(){
+    public Location getLocation(){
         return location;
     }
 
     //How we'll set location until gps location gathering is set up.
-    public void testsetlocation(int gps){
+    public void testsetlocation(Location gps){
         location = gps;
     }
 
