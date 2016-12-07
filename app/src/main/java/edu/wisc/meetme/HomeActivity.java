@@ -25,6 +25,7 @@ import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -64,7 +65,8 @@ public class HomeActivity extends Activity implements LocationListener {
     ArrayList<User> offline = new ArrayList<User>();
     int[] testPrefs = {0,1,1,1,0};
     ArrayAdapter<String> onlineAdapter;
-    User testme = new User(0,"me", "me", testPrefs); //test User representing app user
+    User testme = new User(0,"me", "me", true); //test User representing app user
+    boolean startup = true;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,26 +90,33 @@ public class HomeActivity extends Activity implements LocationListener {
     public void refreshFriends(View v){
         JSONArray serverList;
         //Call to server here
-        //Returns JSONArray where every third element are
-        // 1. First Name,
-        // 2. Last Name,
-        // 3. Active/Inactive Status
+        //Use main user's id/phone number, make HTTP request, getting back a JSON
         serverList = new JSONArray();
+        //Returns JSONArray where every third element are
+        // 1. ID (phone number),
+        // 2. First Name,
+        // 3. Last Name,
+        // 4. Active/Inactive Status
 
-        for (int i = 0; i < serverList.length(); i++){
-            switch(i % 3){
-                case 0: //First Name
+        //If refreshing on startup, create all new user objects
+        if(startup){
+            for (int i = 0; i < serverList.length(); i += 4) {
 
-                    break;
-                case 1: //Last Name
+                try {
+                    int id = (int) serverList.get(i);
+                    String[] name = {serverList.getString(i + 1), serverList.getString(i + 2)};
+                    boolean active = (boolean) serverList.get(i + 3);
+                    User curr = new User(id, name[0], name[1], active);
+                } catch (JSONException e) {
+                    System.out.println("Error in JSON decoding");
+                    e.printStackTrace();
+                }
 
-                    break;
-                case 2: //Active/Inactive Status
-
-                    break;
-                default: //Something went wrong
-                    return;
             }
+        }
+        //Otherwise, check whether user is already created, and if so, edit online status.
+        else{
+
         }
 
     }
@@ -286,10 +295,14 @@ public class HomeActivity extends Activity implements LocationListener {
             else {
                 //compare u's distance from user with the distances within sortedList
                 for (User q : sortedList) {
-
+                    Location uloc = u.getLocation();
+                    Location meloc = testme.getLocation(); ///Replace later with reference to main user/////////////
+                    Location qloc = q.getLocation();
                     //Once gps is properly coded, will have to change how distance is calculated///
-                    udis = 0;//Math.abs(u.getLocation() - testme.getLocation());
-                    qdis = 0;//Math.abs(q.getLocation() - testme.getLocation());
+                    udis = getDistanceFromLatLonInKm(uloc.getLatitude(), uloc.getLongitude(),
+                            meloc.getLatitude(), meloc.getLongitude());
+                    qdis = getDistanceFromLatLonInKm(qloc.getLatitude(), qloc.getLongitude(),
+                            meloc.getLatitude(), meloc.getLongitude());
                     ///////////////////////////////////////////////////////////////////////////////
 
                     //If u's distance is less than q's, insert u before q in the sortedList.
@@ -306,6 +319,25 @@ public class HomeActivity extends Activity implements LocationListener {
         }
         return sortedList;
     }
+
+    public double getDistanceFromLatLonInKm(double lat1,double lon1, double lat2, double lon2) {
+        int R = 6371; // Radius of the earth in km
+        double dLat = deg2rad(lat2-lat1);  // deg2rad below
+        double dLon = deg2rad(lon2-lon1);
+        double a =
+                Math.sin(dLat/2) * Math.sin(dLat/2) +
+                        Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+                                Math.sin(dLon/2) * Math.sin(dLon/2)
+                ;
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        double d = R * c; // Distance in km
+        return d;
+    }
+
+    public double deg2rad(double deg) {
+        return deg * (Math.PI/180);
+    }
+
 
     //Needs work. Will look at alphabetic sorts later.
     private ArrayList<User> alphaSort(ArrayList<User> users){

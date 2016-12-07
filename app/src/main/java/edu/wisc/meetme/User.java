@@ -26,20 +26,19 @@ public class User {
     private Location location; //not sure what data structure location is kept as, so int for now
 
     //Constructor
-    public User(int id, String first, String last, int pref[]){
+    public User(int id, String first, String last, boolean active){
         ID = id;
         name = new String[2];
         name[0] = first;
         name[1] = last;
-        prefs = pref;
+        online = active;
     }
 
-    //Will require querying server at some point, but for now just returns set value
-    public boolean isOnline(){
-        //Every so often, will query server for online status
-        //if enough time has passed since last check, will query server
+    public void setOnline(boolean o){
+        online = o;
+    }
 
-        //else will keep current online status
+    public boolean isOnline(){
         return online;
     }
 
