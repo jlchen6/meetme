@@ -21,6 +21,8 @@ MAIN_PAGE_HTML = """\
     <a href="getrecommendation">GetMidpoint </a>
     </br>
     <a href="registeruser">RegisterUser </a>
+    </br>
+    <a href="refreshgroup">RefreshGroup </a>
   </body>
 </html>
 """
@@ -246,6 +248,58 @@ class RegisterUser(webapp2.RequestHandler):
 	       <input type="submit" value="Register a User">
 	    </form></body></html>\n''')
 
+class RefreshGroup(webapp2.RequestHandler):
+
+	def refresh_group(self, phoneNumber):
+		bucket_name = os.environ.get('BUCKET_NAME', app_identity.get_default_gcs_bucket_name())
+		bucket = '/' + bucket_name
+
+
+		group = db.GqlQuery("SELECT * FROM ActiveUsers WHERE user != :1", phoneNumber)
+
+		returnlist = []
+		for person in group:
+			filename = bucket + '/' + person.user + '.txt'
+			try:
+				gcs_file = gcs.open(filename,'r')
+				
+				# skip phone number and email
+				gcs_file.readline()
+				gcs_file.readline()
+
+				returnlist.append(person.user)
+				returnlist.append(gcs_file.readline()[:-1])
+				returnlist.append(gcs_file.readline()[:-1])
+				returnlist.append(person.active)
+
+				gcs_file.close()
+
+			except gcs.NotFoundError:
+				returnVal(self, lambda : json.dump(["User not found"], self.response.out))
+
+		returnVal(self, lambda : json.dump(returnlist, self.response.out))
+		#if entry:
+		#    returnVal(self, lambda : json.dump(["Update"], self.response.out)) 
+		#else: 
+		#    entry = StoredData(tag = tag, value = value)
+		#    returnVal(self, lambda : json.dump(["Store"], self.response.out)) 
+		#entry.put()
+
+	def post(self):
+		phoneNumber = self.request.get('phone')
+		self.refresh_group(phoneNumber)
+
+# this is just for browser test
+	def get(self):
+		self.response.out.write('''
+	    <html><body>
+	    <form action="/refreshgroup" method="post"
+	          enctype=application/x-www-form-urlencoded>
+	       <p>Phone Number<input type="text" name="phone" /></p>
+	       <input type="hidden" name="fmt" value="html">
+	       <input type="submit" value="Register a User">
+	    </form></body></html>\n''')
+
 
 #### Utilty procedures for generating the output
 #### Handler is an appengine request handler.  writer is a thunk
@@ -269,5 +323,6 @@ application = webapp2.WSGIApplication([
 	('/getvalue', GetValue),
 	('/getrecommendation', GetRecommendation),
 	('/registeruser', RegisterUser),
+	('/refreshgroup', RefreshGroup)
 	], debug=True)
 
