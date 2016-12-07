@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 
 //<<<<<<< HEAD
 //=======
@@ -55,17 +56,21 @@ public class HomeActivity extends Activity implements LocationListener {
 //>>>>>>> refs/remotes/vperiyasamy/master
 
     ArrayList<User> testFriends;
+    ArrayList<String> onlineNames;
     ArrayList<User> online = new ArrayList<User>();
     ArrayList<User> offline = new ArrayList<User>();
     int[] testPrefs = {0,1,1,1,0};
+    ArrayAdapter<String> mAdapter;
     User testme = new User(0,"me", testPrefs); //test User representing app user
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, onlineNames);
+
 //<<<<<<< HEAD
-        //When the user gets online, should send a ping to the server telling it the user is online
+        //When the user gets online, should send a ping to the server asking for list of active friends
     }
 
     //Code for sorting Friends
