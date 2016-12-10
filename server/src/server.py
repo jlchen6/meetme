@@ -112,6 +112,68 @@ class GetValue(webapp2.RequestHandler):
 
 class GetRecommendation(webapp2.RequestHandler):
 
+	def get_recommendation():
+		bucket_name = os.environ.get('BUCKET_NAME', app_identity.get_default_gcs_bucket_name())
+		bucket = '/' + bucket_name
+
+
+		group = db.GqlQuery("SELECT * FROM ActiveUsers WHERE active != :1", False)
+
+		# each of the following tags corresponds to a restaurant category on the Foursquare API for searching locations
+		# each restaurant category initialized to 0 for the tallying of preferences
+		preferences = {
+		'503288ae91d4c4b30a586d67': 0, '4bf58dd8d48988d1c8941735': 0, '4bf58dd8d48988d10a941735': 0, '4bf58dd8d48988d14e941735': 0, '4bf58dd8d48988d142941735': 0,
+		'56aa371be4b08b9a8d573568': 0, '52e81612bcbc57f1066b7a03': 0, '4bf58dd8d48988d145941735': 0, '52af3a7c3cf9994f4e043bed': 0, '4bf58dd8d48988d1f5931735': 0,
+		'52af3aaa3cf9994f4e043bf0': 0, '52af3afc3cf9994f4e043bf8': 0, '52af3b463cf9994f4e043bfe': 0, '52af3b593cf9994f4e043c00': 0, '52af3b773cf9994f4e043c03': 0,
+		'52af3b813cf9994f4e043c04': 0, '4eb1bd1c3b7b55596b4a748f': 0, '52e81612bcbc57f1066b79fb': 0, '52af0bd33cf9994f4e043bdd': 0, '4deefc054765f83613cdba6f': 0,
+		'4bf58dd8d48988d111941735': 0, '55a59bace4b013909087cb24': 0, '55a59bace4b013909087cb27': 0, '4bf58dd8d48988d1d2941735': 0, '55a59bace4b013909087cb2a': 0,
+		'4bf58dd8d48988d113941735': 0, '4bf58dd8d48988d156941735': 0, '4eb1d5724b900d56c88a45fe': 0, '4bf58dd8d48988d1d1941735': 0, '4bf58dd8d48988d149941735': 0,
+		'52af39fb3cf9994f4e043be9': 0, '4bf58dd8d48988d14a941735': 0, '4bf58dd8d48988d169941735': 0, '4bf58dd8d48988d1df931735': 0, '4bf58dd8d48988d16a941735': 0,
+		'4bf58dd8d48988d143941735': 0, '52e81612bcbc57f1066b7a0c': 0, '52e81612bcbc57f1066b79f4': 0, '4bf58dd8d48988d16c941735': 0, '4bf58dd8d48988d17a941735': 0,
+		'4bf58dd8d48988d144941735': 0, '4bf58dd8d48988d1e0931735': 0, '52e81612bcbc57f1066b79f2': 0, '4bf58dd8d48988d1d0941735': 0, '512e7cae91d4cbb4e5efe0af': 0,
+		'4bf58dd8d48988d1c9941735': 0, '4bf58dd8d48988d147941735': 0, '4bf58dd8d48988d148941735': 0, '52e81612bcbc57f1066b7a05': 0, '4bf58dd8d48988d10b941735': 0,
+		'4bf58dd8d48988d16e941735': 0, '4bf58dd8d48988d1cb941735': 0, '4bf58dd8d48988d10c941735': 0, '4d4ae6fc7a7b7dea34424761': 0, '4bf58dd8d48988d10d941735': 0,
+		'4bf58dd8d48988d10e941735': 0, '4bf58dd8d48988d16f941735': 0, '4bf58dd8d48988d10f941735': 0, '54135bf5e4b08f3d2429dfdd': 0, '54135bf5e4b08f3d2429dfde': 0,
+		'52e81612bcbc57f1066b7a06': 0, '4bf58dd8d48988d110941735': 0, '4bf58dd8d48988d1be941735': 0, '4bf58dd8d48988d1bf941735': 0, '4bf58dd8d48988d1c0941735': 0,
+		'4bf58dd8d48988d1c1941735': 0, '4bf58dd8d48988d153941735': 0, '4bf58dd8d48988d151941735': 0, '56aa371ae4b08b9a8d5734ba': 0, '4bf58dd8d48988d115941735': 0,
+		'4bf58dd8d48988d1ca941735': 0, '4def73e84765ae376e57713a': 0, '56aa371be4b08b9a8d5734c7': 0, '4bf58dd8d48988d1c5941735': 0, '4bf58dd8d48988d1ce941735': 0,
+		'4bf58dd8d48988d14f941735': 0, '4bf58dd8d48988d150941735': 0, '5413605de4b0ae91d18581a9': 0, '4bf58dd8d48988d1cc941735': 0, '4bf58dd8d48988d1d3941735': 0,
+		'4bf58dd8d48988d14c941735': 0 }
+
+		coordinates = []
+
+		for person in group:
+			filename = bucket + '/' + person.user + '.txt'
+			try:
+				gcs_file = gcs.open(filename,'r')
+				
+				# skip phone number, email, first name, and last name
+				gcs_file.readline()
+				gcs_file.readline()
+				gcs_file.readline()
+
+				lat = float(gcs_file.readline()[:-1])
+				lon = float(gcs_file.readline()[:-1])
+				
+				#capture latitude and longitude in a pair and append to list
+				coords = (lat, lon)
+				coordinates.append(coords)
+
+				line = gcs_file.readline()[:-1]
+
+				# loop through user's file for all preferences and their votes on them
+				while line != '':
+					segments = line.split()
+					category = segments[0]
+					vote = int(segments[1])
+					preferences[category] += vote
+					line = gcs_file.readline()[:-1]
+
+				gcs_file.close()
+
+			except gcs.NotFoundError:
+				returnVal(self, lambda : json.dump(["User not found"], self.response.out))
+
 	def get_midpoint(pairs):
 		cartesian = []
 		w = 0
