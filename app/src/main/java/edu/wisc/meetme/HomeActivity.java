@@ -61,6 +61,7 @@ public class HomeActivity extends Activity implements LocationListener {
 
     ArrayList<User> testFriends;
     ArrayList<String> onlineNames;
+    ArrayList<User> allFriends = new ArrayList<User>();
     ArrayList<User> online = new ArrayList<User>();
     ArrayList<User> offline = new ArrayList<User>();
     int[] testPrefs = {0,1,1,1,0};
@@ -101,50 +102,90 @@ public class HomeActivity extends Activity implements LocationListener {
         //If refreshing on startup, create all new user objects
         if(startup){
             for (int i = 0; i < serverList.length(); i += 4) {
-
                 try {
                     int id = (int) serverList.get(i);
                     String[] name = {serverList.getString(i + 1), serverList.getString(i + 2)};
                     boolean active = (boolean) serverList.get(i + 3);
                     User curr = new User(id, name[0], name[1], active);
+                    allFriends.add(curr);
+                    if(active){
+                        online.add(curr);
+                    }
+                    else{
+                        offline.add(curr);
+                    }
                 } catch (JSONException e) {
                     System.out.println("Error in JSON decoding");
                     e.printStackTrace();
                 }
-
             }
+            startup = false;
         }
         //Otherwise, check whether user is already created, and if so, edit online status.
         else{
+            for(int i = 0; i < serverList.length(); i+= 4){
+                try {
+                    int currindex = 0;
+                    int id = (int) serverList.get(i);
+                    String[] name = {serverList.getString(i + 1), serverList.getString(i + 2)};
+                    boolean active = (boolean) serverList.get(i + 3);
+                    boolean usercreated = false;
+                    for(int j = 0; j < allFriends.size(); j++){
+                        if(id == allFriends.get(j).getID()){
+                            usercreated = true;
+                            currindex = j;
+                        }
+                    }
+                    if(!usercreated){
+                        User curr = new User(id, name[0], name[1], active);
+                        allFriends.add(curr);
+                        if(active){
+                            online.add(curr);
+                        }
+                        else{
+                            offline.add(curr);
+                        }
+                    }
+                    else{
+                        User curr = allFriends.get(currindex);
+                        boolean lastState = curr.isOnline();
+                        //Check if the user's last online status matches the current online status
+                        if(lastState != active){
+                            //If lastState was online, need to remove user from online friends and place them in offline friends
+                            if(lastState){
+                                for(User user : online){
+                                    if(user.getID() == curr.getID()){
+                                        online.remove(user);
+                                        offline.add(user);
+                                        user.setOnline(active);
+                                    }
+                                }
+                            }
+                            //Similarly, if last status was offline, need to move to online list
+                            else{
+                                for(User user : offline){
+                                    if(user.getID() == curr.getID()){
+                                        offline.remove(user);
+                                        online.add(user);
+                                        user.setOnline(active);
+                                    }
+                                }
+                            }
+                        }
+                    }
 
+                } catch (JSONException e) {
+                    System.out.println("Error in JSON decoding");
+                    e.printStackTrace();
+                }
+                online = gpsSort(online);
+                offline = alphaSort(offline);
+            }
         }
 
     }
 
-    //Code for sorting Friends
-    private void friendsort(ArrayList<User> a){
-
-        //First split up friends into online and offline
-        for(int i = 0; i < a.size(); i++){
-            User currfriend = a.get(i);
-            //Check if currfriend is online
-            //If currfriend is online, add them to online list
-            if(currfriend.isOnline()){
-                online.add(currfriend);
-            }
-            //else add them to the offline list
-            else {
-                offline.add(currfriend);
-            }
-        }
-
-        //Next, order online friends by distance from user
-        //Test code sets up stuff for sorting////////////////
-        //testme.testsetlocation(0);
-        ////////////////////////////////////////////////////
-
-        online = gpsSort(online);
-        offline = alphaSort(offline);
+    
 //=======
 //        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 //        // Get the default location service provider
@@ -181,7 +222,7 @@ public class HomeActivity extends Activity implements LocationListener {
 //        // ATTENTION: This was auto-generated to implement the App Indexing API.
 //        // See https://g.co/AppIndexing/AndroidStudio for more information.
 //        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
-    }
+
 
 
     @Override
