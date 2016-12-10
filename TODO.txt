@@ -1,0 +1,4 @@
+ToDo for week of Oct. 23rd:
+	Create basic activity interfaces
+		Create activity for Home, Profile, etc.
+		Profile interacting with files, server interacting with server
