@@ -67,7 +67,7 @@ public class HomeActivity extends Activity implements LocationListener {
     int[] testPrefs = {0,1,1,1,0};
     ArrayAdapter<String> onlineAdapter;
     User testme = new User(0,"me", "me", true); //test User representing app user
-    boolean startup = true;
+    boolean startup;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,7 +78,8 @@ public class HomeActivity extends Activity implements LocationListener {
         onlineNames.add("Abby Smith");
         onlineNames.add("Johnny Appleseed");
         /////////////////////////////////////////////
-
+        startup = true;
+        refreshFriends(getCurrentFocus());
         onlineAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, R.id.friendsActive, onlineNames);
 
 //<<<<<<< HEAD
@@ -136,6 +137,7 @@ public class HomeActivity extends Activity implements LocationListener {
                             currindex = j;
                         }
                     }
+                    //If the user isn't already created, add them to the correct lists
                     if(!usercreated){
                         User curr = new User(id, name[0], name[1], active);
                         allFriends.add(curr);
@@ -146,6 +148,7 @@ public class HomeActivity extends Activity implements LocationListener {
                             offline.add(curr);
                         }
                     }
+                    //If the user is created, edit their online status if needed and move to correct list
                     else{
                         User curr = allFriends.get(currindex);
                         boolean lastState = curr.isOnline();
@@ -178,14 +181,15 @@ public class HomeActivity extends Activity implements LocationListener {
                     System.out.println("Error in JSON decoding");
                     e.printStackTrace();
                 }
-                online = gpsSort(online);
-                offline = alphaSort(offline);
             }
         }
 
+        online = gpsSort(online);
+        offline = alphaSort(offline);
+
     }
 
-    
+
 //=======
 //        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 //        // Get the default location service provider
@@ -402,7 +406,6 @@ public class HomeActivity extends Activity implements LocationListener {
                         break;
                     }
                 }
-                //If u's distance wasn't less than any user within sortedList, just add to end.
                 if(!uadded)
                     sortedList.add(u);
             }
