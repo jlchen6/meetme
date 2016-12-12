@@ -2,12 +2,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="edu.wisc.meetme.PreferenceFragment">
+    tools:context="edu.wisc.meetme.ProfileFragment"
+    android:id="@+id/content_preference">
 
     <!-- TODO: Update blank fragment layout -->
 
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/foodPreference" />
+        android:id="@+id/foodList" />
 </FrameLayout>
