@@ -5,7 +5,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentManager;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -16,14 +17,30 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
+import static edu.wisc.meetme.R.layout.activity_main;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
-        CalendarFragment.OnFragmentInteractionListener {
+        CalendarFragment.OnFragmentInteractionListener,
+        MessageFragment.OnFragmentInteractionListener,
+        FriendsFragment.OnFragmentInteractionListener,
+        ProfileFragment.OnFragmentInteractionListener {
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+
+        setContentView(activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -44,6 +61,8 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+
     }
 
     @Override
@@ -82,28 +101,61 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
+
+        FragmentManager manager = getFragmentManager();
+
         int id = item.getItemId();
 
+
         if (id == R.id.nav_camera) {
-            // Handle the camera action
-            System.out.print("Camera selected");
+            manager.beginTransaction().replace(R.id.content_main, new MessageFragment()).commit();
+//            MessageFragment messageFragment = new MessageFragment();
+//            FragmentManager manager = getSupportFragmentManager();
+//            manager.beginTransaction().replace(
+//                    R.id.content_main,
+//                    messageFragment,
+//                    messageFragment.getTag()
+//            ).commit();
         } else if (id == R.id.nav_gallery) {
-            System.out.print("Gallery selected");
+            manager.beginTransaction().replace(R.id.content_main, new FriendsFragment()).commit();
+//            FriendsFragment friendsFragment = new FriendsFragment();
+//            FragmentManager manager = getSupportFragmentManager();
+//            manager.beginTransaction().replace(
+//                    R.id.content_main,
+//                    friendsFragment,
+//                    friendsFragment.getTag()
+//            ).commit();
         } else if (id == R.id.nav_slideshow) {
-            Intent i = new Intent(MainActivity.this, MapsActivity.class);
-            startActivity(i);
+            manager.beginTransaction().replace(R.id.content_main, new GmapFragment()).commit();
+////            if (!sMapFragment.isAdded()) {
+////                sFm.beginTransaction().add(R.id.map, sMapFragment).commit();
+////            } else {
+////                sFm.beginTransaction().show(sMapFragment).commit();
+////            }
+//            sFm.beginTransaction().replace(R.id.content_main, new GmapFragment()).commit();
+
         } else if (id == R.id.nav_manage) {
-            Intent i = new Intent(MainActivity.this, ProfileActivity.class);
-            startActivity(i);
+            manager.beginTransaction().replace(R.id.content_main, new ProfileFragment()).commit();
+//            ProfileFragment profileFragment = new ProfileFragment();
+//            FragmentManager manager = getSupportFragmentManager();
+//            manager.beginTransaction().replace(
+//                    R.id.content_main,
+//                    profileFragment,
+//                    profileFragment.getTag()
+//            ).commit();
+
+//            Intent i = new Intent(MainActivity.this, ProfileActivity.class);
+//            startActivity(i);
         }  else if (id == R.id.nav_send) {
-            System.out.print("Calender selected");
-            CalendarFragment calendarFragment = new CalendarFragment();
-            FragmentManager manager = getSupportFragmentManager();
-            manager.beginTransaction().replace(
-                    R.id.content_main,
-                    calendarFragment,
-                    calendarFragment.getTag()
-            ).commit();
+            manager.beginTransaction().replace(R.id.content_main, new CalendarFragment()).commit();
+//            System.out.print("Calender selected");
+//            CalendarFragment calendarFragment = new CalendarFragment();
+//            FragmentManager manager = getSupportFragmentManager();
+//            manager.beginTransaction().replace(
+//                    R.id.content_main,
+//                    calendarFragment,
+//                    calendarFragment.getTag()
+//            ).commit();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -115,4 +167,5 @@ public class MainActivity extends AppCompatActivity
     public void onFragmentInteraction(Uri uri) {
 
     }
+
 }

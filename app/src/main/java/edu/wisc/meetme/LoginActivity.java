@@ -9,7 +9,7 @@ import android.view.View;
  * Created by Yaphet on 11/12/16.
  */
 
-public class LoginActivity extends Activity{
+public class LoginActivity extends Activity {
 
 
 

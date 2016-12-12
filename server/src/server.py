@@ -9,6 +9,10 @@ import logging
 import os
 import cloudstorage as gcs
 
+import urllib
+import urllib2
+
+from google.appengine.api import urlfetch
 from google.appengine.api import app_identity
 
 MAIN_PAGE_HTML = """\
@@ -174,6 +178,38 @@ class GetRecommendation(webapp2.RequestHandler):
 			except gcs.NotFoundError:
 				returnVal(self, lambda : json.dump(["User not found"], self.response.out))
 
+		# call midpoint function to find geographic midpoint
+		midpoint = get_midpoint(coordinates)
+
+		# choose maximum voted categories by votes
+		preferences = sorted(preferences, key=preferences.get, reverse=True)[:10]
+		# below is for choosing only the top choice
+		#category = max(preferences, key=preferences.get)
+
+		url = 'https://api.foursquare.com/v2/venues/search?v=20161210&ll='
+		url += midpoint[0]
+		url += ','
+		url += midpoint[1]
+		url += '&client_id=UGTZZ2JKSHYYCYADYWZ0GRO5C5F0TJOWNTK4JN401AWR444Z&client_secret=EVKPHZ0UXMS1F0PJP5S4UKU4IL0TMHXFWTLEIL3FFBGLNZAF&radius=800&categoryId='
+
+		for category in preferences:
+			url += category
+			url += ','
+
+		url = url[:-1]
+
+		try:
+            #form_data = urllib.urlencode(UrlPostHandler.form_fields)
+            #headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+            result = urlfetch.fetch( url=url, method=urlfetch.GET, headers = {"Content-Type": "application/json"})
+
+            data = json.loads(result.content)
+            data[]
+            
+        except urlfetch.Error:
+            logging.exception('Caught exception fetching url')
+
+
 	def get_midpoint(pairs):
 		cartesian = []
 		w = 0
@@ -218,15 +254,7 @@ class GetRecommendation(webapp2.RequestHandler):
 		lat = lat * 180 / math.pi
 		lon = lon * 180 / math.pi
 
-		# Python supports the creation of anonymous functions (i.e. functions that are 
-		# not bound to a name) at runtime, using a construct called "lambda". 
-		# http://www.secnetix.de/olli/Python/lambda_functions.hawk
-		# json for python:  http://docs.python.org/2/library/json.html
-		returnVal(self, lambda : json.dump(["MIDPOINT", lat, lon], self.response.out))
-    
-	    ## The above call to returnVal is equivalent to:
-	    #self.response.headers['Content-Type'] = 'application/jsonrequest'
-	    #json.dump(["VALUE", tag, value], self.response.out)
+		return (lat, lon)
     
 
 	def post(self):
