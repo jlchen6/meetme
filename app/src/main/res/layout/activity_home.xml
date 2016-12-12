@@ -7,6 +7,18 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="Set me as Available!"
+        android:id="@+id/availableButton"
+        android:onClick="setAvailable"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Get a Recommendation!"
+        android:id="@+id/recommendButton"
+        android:onClick="getRecommendation"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="Refresh"
         android:id="@+id/refreshButton"
         android:onClick="refreshFriends"/>

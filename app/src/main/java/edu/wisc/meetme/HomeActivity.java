@@ -52,11 +52,10 @@ public class HomeActivity extends Activity implements LocationListener {
 
     }
 
-    public void goToMap(View view) {
-        Intent i = new Intent(HomeActivity.this, MapsActivity.class);
-        startActivity(i);
-
-    }
+    //public void goToMap(View view) {
+    //    Intent i = new Intent(HomeActivity.this, MapsActivity.class);
+    //    startActivity(i);
+    //}
 //>>>>>>> refs/remotes/vperiyasamy/master
 
     ArrayList<User> testFriends;
@@ -84,7 +83,31 @@ public class HomeActivity extends Activity implements LocationListener {
 
 //<<<<<<< HEAD
         //When the user gets online, should send a ping to the server asking for list of active friends
-        //refreshFriends();
+        //refreshFriends(getCurrentFocus());
+
+    }
+
+    //Queries server for recommendation, once receives info, displays popup with info.
+    //Query should return:
+    // 1. Name of restaurant
+    // 2. Location
+    public void getRecommendation(View v){
+        //Query server, receive JSON with restaurant info
+
+        //Filter through info
+
+        //Display info in popup
+
+    }
+
+    //Button to set self as available. Query server to update user availability
+    public void setAvailable(View v){
+        //Access app user's online status and set as active
+
+        //Send query to server to update user info with online status
+
+        //Send refresh request as well for the heck of it?
+        refreshFriends(getCurrentFocus());
 
     }
 
@@ -93,7 +116,7 @@ public class HomeActivity extends Activity implements LocationListener {
         JSONArray serverList;
         //Call to server here
         //Use main user's id/phone number, make HTTP request, getting back a JSON
-        serverList = new JSONArray();
+        serverList = new JSONArray(); //Replace with function call for a server query!!//////////////////////////////////////////////
         //Returns JSONArray where every third element are
         // 1. ID (phone number),
         // 2. First Name,
